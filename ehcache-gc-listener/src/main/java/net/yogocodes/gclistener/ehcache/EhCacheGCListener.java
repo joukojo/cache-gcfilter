@@ -69,8 +69,13 @@ public class EhCacheGCListener implements NotificationListener {
 
 	public static void register() throws MalformedObjectNameException,
 			InstanceNotFoundException {
-		EhCacheGCListener listener = new EhCacheGCListener();
 		
+		boolean isListeningDisabled = "true".equals(System.getProperty("gc.listener.disable"));
+		if( isListeningDisabled ) {
+			return;
+		}
+		
+		EhCacheGCListener listener = new EhCacheGCListener();
 		boolean analyzeMemoryConsumption = System.getProperty("gc.listener.analyze.memory") != null;
 		listener.setAnalyzeMemoryConsumption(analyzeMemoryConsumption);
 		
