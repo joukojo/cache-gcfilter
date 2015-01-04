@@ -51,7 +51,7 @@ public class EhCacheGCListener implements NotificationListener {
 					for (final String cacheName : cacheNames) {
 						final Cache cache = cacheManager.getCache(cacheName);
 						if (isAnalyzeMemoryConsumption()) {
-							long calculateInMemorySize = cache
+							final long calculateInMemorySize = cache
 									.calculateInMemorySize();
 							logger.info("{} : {} bytes [{}Mb]", cacheName,
 									calculateInMemorySize, (calculateInMemorySize/1024/1024));
@@ -74,15 +74,15 @@ public class EhCacheGCListener implements NotificationListener {
 		if( isListeningDisabled ) {
 			return;
 		}
-		
-		EhCacheGCListener listener = new EhCacheGCListener();
-		boolean analyzeMemoryConsumption = System.getProperty("gc.listener.analyze.memory") != null;
+
+		final EhCacheGCListener listener = new EhCacheGCListener();
+		final boolean analyzeMemoryConsumption = System.getProperty("gc.listener.analyze.memory") != null;
 		listener.setAnalyzeMemoryConsumption(analyzeMemoryConsumption);
 		
-		ObjectName gcName = new ObjectName(
+		final ObjectName gcName = new ObjectName(
 				ManagementFactory.GARBAGE_COLLECTOR_MXBEAN_DOMAIN_TYPE + ",*");
-		MBeanServer server = ManagementFactory.getPlatformMBeanServer();
-		for (ObjectName name : server.queryNames(gcName, null)){
+		final MBeanServer server = ManagementFactory.getPlatformMBeanServer();
+		for (final ObjectName name : server.queryNames(gcName, null)){
 			server.addNotificationListener(name, listener, null, null);
 		}
 	}
