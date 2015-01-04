@@ -35,9 +35,9 @@ public class EhCacheGCListener implements NotificationListener {
 		if ("com.sun.management.gc.notification".equals(notificationType)) {
 			// retrieve the garbage collection notification information
 
-			CompositeData cd = (CompositeData) notification.getUserData();
+			final CompositeData cd = (CompositeData) notification.getUserData();
 
-			GarbageCollectionNotificationInfo info = GarbageCollectionNotificationInfo
+			final GarbageCollectionNotificationInfo info = GarbageCollectionNotificationInfo
 					.from(cd);
 
 			logger.trace("{} : {} : {}", info.getGcName(), info.getGcAction(),
@@ -46,10 +46,10 @@ public class EhCacheGCListener implements NotificationListener {
 			if ("end of major GC".equals(info.getGcAction())) {
 				List<CacheManager> cacheManagers = CacheManager.ALL_CACHE_MANAGERS;
 
-				for (CacheManager cacheManager : cacheManagers) {
-					String[] cacheNames = cacheManager.getCacheNames();
-					for (String cacheName : cacheNames) {
-						Cache cache = cacheManager.getCache(cacheName);
+				for (final CacheManager cacheManager : cacheManagers) {
+					final String[] cacheNames = cacheManager.getCacheNames();
+					for (final String cacheName : cacheNames) {
+						final Cache cache = cacheManager.getCache(cacheName);
 						if (isAnalyzeMemoryConsumption()) {
 							long calculateInMemorySize = cache
 									.calculateInMemorySize();
