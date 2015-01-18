@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>net.yogocodes</groupId>
   <artifactId>ehcache-gc-listener-parent</artifactId>
-  <version>0.0.2</version>
+  <version>0.0.3-SNAPSHOT</version>
   <packaging>pom</packaging>
   <modules>
   	<module>ehcache-gc-listener</module>

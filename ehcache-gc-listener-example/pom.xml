@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>net.yogocodes</groupId>
 		<artifactId>ehcache-gc-listener-parent</artifactId>
-		<version>0.0.2</version>
+		<version>0.0.3-SNAPSHOT</version>
 	</parent>
 	<artifactId>ehcache-gc-listener-example</artifactId>
 
@@ -12,7 +12,7 @@
 		<dependency>
 			<groupId>net.yogocodes</groupId>
 			<artifactId>ehcache-gc-listener</artifactId>
-			<version>0.0.2</version>
+			<version>0.0.3-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>
