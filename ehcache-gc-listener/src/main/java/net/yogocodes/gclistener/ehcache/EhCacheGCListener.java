@@ -21,16 +21,19 @@ import org.slf4j.LoggerFactory;
 // net.yogocodes.gclistener.ehcache.EhCacheGCListener
 public class EhCacheGCListener implements NotificationListener {
 
-	private final Logger logger = LoggerFactory
+	private static final Logger LOGGER = LoggerFactory
 			.getLogger(EhCacheGCListener.class);
 
+	private boolean isGcLoopDetectionEnabled=false; 
 	private boolean analyzeMemoryConsumption = false;
+	private long fullGCPeriodicTime = 0L; 
+	private long lastFullGCTime = 0L;
 
 	public void handleNotification(Notification notification, Object handback) {
 
 		String notificationType = notification.getType();
 
-		logger.trace("notificationType: {}", notificationType);
+		LOGGER.trace("notificationType: {}", notificationType);
 
 		if ("com.sun.management.gc.notification".equals(notificationType)) {
 			// retrieve the garbage collection notification information
@@ -40,10 +43,24 @@ public class EhCacheGCListener implements NotificationListener {
 			final GarbageCollectionNotificationInfo info = GarbageCollectionNotificationInfo
 					.from(cd);
 
-			logger.trace("{} : {} : {}", info.getGcName(), info.getGcAction(),
+			LOGGER.trace("{} : {} : {}", info.getGcName(), info.getGcAction(),
 					info.getGcCause());
 
+
 			if ("end of major GC".equals(info.getGcAction())) {
+
+				if( isGcLoopDetectionEnabled ) {
+					long now = System.currentTimeMillis();
+					long delta = (now - lastFullGCTime) ;
+					boolean isOnFullGCLoop = delta < fullGCPeriodicTime; 
+
+					lastFullGCTime = System.currentTimeMillis();
+					if( !isOnFullGCLoop ) {
+						LOGGER.trace("the last full gc was {} msecs ago, so ignoring this full gc", delta);
+						return; 
+					}
+				}
+
 				List<CacheManager> cacheManagers = CacheManager.ALL_CACHE_MANAGERS;
 
 				for (final CacheManager cacheManager : cacheManagers) {
@@ -53,10 +70,10 @@ public class EhCacheGCListener implements NotificationListener {
 						if (isAnalyzeMemoryConsumption()) {
 							final long calculateInMemorySize = cache
 									.calculateInMemorySize();
-							logger.info("{} : {} bytes [{}Mb]", cacheName,
+							LOGGER.info("{} : {} bytes [{}Mb]", cacheName,
 									calculateInMemorySize, (calculateInMemorySize/1024/1024));
 						} else {
-							logger.info(cache.toString());
+							LOGGER.info(cache.toString());
 						}
 
 					}
@@ -75,10 +92,20 @@ public class EhCacheGCListener implements NotificationListener {
 			return;
 		}
 
+		boolean isGcLoopDetectionEnabled = "true".equals(System.getProperty("gc.listener.loop.detect"));
+
 		final EhCacheGCListener listener = new EhCacheGCListener();
 		final boolean analyzeMemoryConsumption = System.getProperty("gc.listener.analyze.memory") != null;
 		listener.setAnalyzeMemoryConsumption(analyzeMemoryConsumption);
-		
+		listener.isGcLoopDetectionEnabled = isGcLoopDetectionEnabled; 
+		if( isGcLoopDetectionEnabled ) {
+			try {
+			listener.fullGCPeriodicTime = Long.valueOf(System.getProperty("gc.listener.loop.time"));
+			}
+			catch( NumberFormatException nfe ) {
+				LOGGER.warn("check the gc.listener.loop.time value {}", System.getProperty("gc.listener.loop.time") );
+			}
+		}
 		final ObjectName gcName = new ObjectName(
 				ManagementFactory.GARBAGE_COLLECTOR_MXBEAN_DOMAIN_TYPE + ",*");
 		final MBeanServer server = ManagementFactory.getPlatformMBeanServer();
