@@ -3,7 +3,7 @@
   <parent>
     <groupId>net.yogocodes</groupId>
     <artifactId>ehcache-gc-listener-parent</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.2</version>
   </parent>
   <artifactId>ehcache-gc-listener</artifactId>
   
