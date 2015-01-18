@@ -26,8 +26,11 @@ JVM-options
 ===========
 
 gc.listener.disable - disable the full gc monitoring. Set this value to true
-gc.listener.analyze.memory=set this true, if you want to calculate cache size. This consumes CPU
+
+gc.listener.analyze.memory - set this true, if you want to calculate cache size. This consumes CPU
+
 gc.listener.loop.detect - enable the full gc -loop detection. Monitor only if the full gc is happening too often
+
 gc.listener.loop.time - how often the full gc is determined as a full gc -loop. Value users msecs.
 
 
