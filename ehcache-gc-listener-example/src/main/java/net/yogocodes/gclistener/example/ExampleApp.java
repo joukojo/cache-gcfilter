@@ -15,7 +15,13 @@ public class ExampleApp {
 
 	public static void main(String[] args) throws MalformedObjectNameException, InstanceNotFoundException {
 
+		// enable the GC listening.
 		EhCacheGCListener.register();
+
+		/*
+			Following code is just to get the Full GC running. 
+			Nothing else. 
+		*/
 		final CacheManager cacheManager = CacheManager.create();
 		cacheManager.addCache("exampleCache");
 		final Cache cache = cacheManager.getCache("exampleCache");
